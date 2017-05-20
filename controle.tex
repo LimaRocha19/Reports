@@ -166,7 +166,34 @@ deste processo. Para isso, aplicamos a transformada inversa de Laplace.
   2u(t) &= \frac{d^2 v(t)}{dt^2} + 7\frac{d v(t)}{dt} + 8v(t) \\
 \end{align*}
 
-\section{Resposta ao Degrau Unitário e Valor Final}
+\section{Resposta ao Degrau Unitário e Valor Final via \emph{Matlab}}
+
+Abaixo, \emph{script} \emph{Matlab} para apresentação do mapa de pólos e zeros (que comprova o tipo de amorteciento do sistema) e para apresentação da resposta ao ``degrau'', bem como a saída para a janela de comandos, estando assinalados os valores notáveis dos gráficos.
+
+\begin{verbatim}
+  clc
+  clear all
+  clear space
+
+  T = tf([2],[1 7 8]) % definição da função de transferência
+  step(T) % resposta ao degrau
+  figure % abertura de nova janela para o próximo gráfico
+  pzmap(T) % mapa de pólos e zeros
+\end{verbatim}
+
+\begin{verbatim}
+
+  Transfer function 'T' from input 'u1' to output ...
+
+                     2
+          y1:  -------------
+               s^2 + 7 s + 8
+
+  Continuous-time model.
+
+\end{verbatim}
+
+\section{Resposta ao Degrau Unitário e Valor Final \emph{Analiticamente}}
 
 A partir dos conhecimentos desenvolvidos na disciplina de Controle e Servomecanismos I, podemos desenvolver analiticamente
 o cálculo da resposta ao ``degrau'' e do valor final da FT mostrados anteriormente.
