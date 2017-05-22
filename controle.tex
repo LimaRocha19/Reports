@@ -25,10 +25,18 @@
 \usepackage{nomencl} 			% Lista de simbolos
 \usepackage{color}				% Controle das cores
 \usepackage{graphicx}			% Inclusão de gráficos
+\usepackage[export]{adjustbox}
 \usepackage{microtype} 			% para melhorias de justificação
 % ---
 \usepackage{amsmath}
 \usepackage[backend=bibtex,style=verbose-trad2]
+
+% ---
+% Pacotes de citações
+% ---
+\usepackage[brazilian,hyperpageref]{backref}	 % Paginas com as citações na bibl
+\usepackage[alf]{abntex2cite}	% Citações padrão ABNT
+% ---
 
 % ---
 % Informações de dados para CAPA e FOLHA DE ROSTO
@@ -166,6 +174,20 @@ deste processo. Para isso, aplicamos a transformada inversa de Laplace.
   2u(t) &= \frac{d^2 v(t)}{dt^2} + 7\frac{d v(t)}{dt} + 8v(t) \\
 \end{align*}
 
+\section{Alguns valores notáveis}
+
+A partir da TF, podemos calcular alguns valores notáveis, parâmetros que apresentam o funcionamento dela. São estes ${\%UP}$, ${\zeta}$, ${\omega_n}$, ${\sigma_d}$, ${\omega_d}$, ${Ts}$, ${Tp}$, ${Tr}$ e ${G(s)}$, sendo que ${\%UP}$, ${\omega_d}$ e ${Tp}$ não precisam ser calculados (dado que o comportamento da TF, como será visto, é superamortecido) e ${Ts}$, ${\zeta}$ e ${\omega_n}$ serão deduzidos mais adiante (usaremos o valor já calculado). Abaixo, a dedução dos valores, considerando realimentação unitária (${H(s) = 1}$):
+
+\begin{align*}
+  \sigma_d &= \zeta\omega_n = 3,5 \\
+  \frac{G(s)}{1 + G(s)} &= \frac{2}{s^2 + 7s + 8} \\
+  G(s) - \frac{2G(s)}{s^2 + 7s + 8} &= \frac{2}{s^2 + 7s + 8} \\
+  G(s)(\frac{s^2 + 7s + 6}{s^2 + 7s + 8}) &= \frac{2}{s^2 + 7s + 8} \\
+  G(s) &= \frac{2}{s^2 + 7s + 6}
+\end{align*}
+
+\newpage
+
 \section{Resposta ao Degrau Unitário e Valor Final via \emph{Matlab}}
 
 Abaixo, \emph{script} \emph{Matlab} para apresentação do mapa de pólos e zeros (que comprova o tipo de amorteciento do sistema) e para apresentação da resposta ao ``degrau'', bem como a saída para a janela de comandos, estando assinalados os valores notáveis dos gráficos.
@@ -193,6 +215,20 @@ Abaixo, \emph{script} \emph{Matlab} para apresentação do mapa de pólos e zero
 
 \end{verbatim}
 
+Executando o \emph{script}, obtemos os resultados apreciados nas Figuras \ref{fig:pzmap} e \ref{fig:step}.
+
+\begin{figure}[b]
+  \includegraphics[width=\linewidth, center]{pzmap.png}
+  \caption{Mapa de pólos e zeros da TF.}
+  \label{fig:pzmap}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth, center]{step.png}
+  \caption{Resposta ao ``degrau'' da TF.}
+  \label{fig:step}
+\end{figure}
+
 \section{Resposta ao Degrau Unitário e Valor Final \emph{Analiticamente}}
 
 A partir dos conhecimentos desenvolvidos na disciplina de Controle e Servomecanismos I, podemos desenvolver analiticamente
@@ -201,8 +237,8 @@ o cálculo da resposta ao ``degrau'' e do valor final da FT mostrados anteriorme
 Para uma TF de segunda ordem qualquer (semelhante à colocada no início do presente documento), sabemos que:
 
 \begin{align*}
-  C &= 2\zeta\omega n \\
-  D &= \omega n^2
+  C &= 2\zeta\omega_n \\
+  D &= \omega_n^2
 \end{align*}
 
 Sendo ${\zeta}$ a constante de amortecimento do sistema e ${\omega}$n sua frequência natural de oscilação. Também sabemos, a partir do seu mapa de pólos e zeros calculado anteriormente, que a TF possui comportamento superamortecido, não apresentando \emph{overshoot} e com pólos reais distintos no semiplano esquerdo (o que indica estabilidade).
@@ -210,10 +246,10 @@ Sendo ${\zeta}$ a constante de amortecimento do sistema e ${\omega}$n sua frequ�
 Possuindo os valores de ${\zeta}$ e ${\omega}$, podemos calcular os parâmetros que definirão sua resposta ao ``degrau'':
 
 \begin{align*}
-  Ts &= \frac{4}{\zeta\omega n}
+  Ts &= \frac{-3}{p_1}
 \end{align*}
 
-Sendo ${Ts}$ o tempo de assentamento da TF. Também podemos calcular a qual valor a TF tende quando estimulada, através da fórmula, sendo ${C(s)}$ a função de saída de um sistema qualquer:
+Sendo ${Ts}$ o tempo de assentamento da TF e ${p1}$ o primeiro pólo encontrado através do \emph{script Matlab}, resultando num valor aproximado com erro de cerca de 5\%. Também podemos calcular a qual valor a TF tende quando estimulada, através da fórmula, sendo ${C(s)}$ a função de saída de um sistema qualquer:
 
 \begin{align*}
   Cfinal = c(t\to\infty) = \lim_{s\to 0} sC(s)
@@ -222,13 +258,13 @@ Sendo ${Ts}$ o tempo de assentamento da TF. Também podemos calcular a qual valo
 Abaixo, todos os valores são calculados e podem ser comparados com o apreciado anteriormente, nas simulações, substituindo os valores de ${A}$, ${B}$, ${C}$ e ${D}$ corretamente.
 
 \begin{align*}
-  \omega n &= \sqrt{8} = 2,83 \\
-  \zeta &= \frac{7}{2\omega n} = 1,24 \\
-  Ts &= 1,14 \\
+  \omega_n &= \sqrt{8} = 2,83 \\
+  \zeta &= \frac{7}{2\omega_n} = 1,24 \\
+  Ts &= 2,08 \\
   Cfinal &= \lim_{s\to 0} sC(s) = \lim_{s\to 0} sR(s)T(s) = \lim_{s\to 0} \frac{2}{s^2 + 7s + 8} = 0,25
 \end{align*}
 
-Observando todos os valores calculados, fica claro que a simulação está compatível com os valores esperados da TF.
+Observando todos os valores calculados, fica claro que a simulação está compatível com os valores esperados da TF, guardados as proporções e os devidos erros propagados pelo cálculo manual.
 
 \section{Parâmetros do Circuito Elétrico Equivalente}
 
@@ -242,22 +278,45 @@ apresente as características da FT analisada. Para isso, retomaremos a equaçã
 E adotaremos a fórmula apresentada por \cite{controleessencial}:
 
 \begin{align*}
-  \frac{1}{R2RC1C2}u(t) &= \frac{d^2 v(t)}{dt^2} + \frac{1}{R1C1}\frac{d v(t)}{dt} + \frac{1}{R2R3R1C2}v(t)
+  \frac{1}{R_2RC_1C_2}u(t) &= \frac{d^2 v(t)}{dt^2} + \frac{1}{R_1C_1}\frac{d v(t)}{dt} + \frac{1}{R_2R_3R_1C_2}v(t)
 \end{align*}
 
-Desenvolvendo e unindo ambas a partir das premissas de que ${C1 = C2 = 10 \mu F}$ e de que ${R1 = R2}$, temos:
+Desenvolvendo e unindo ambas a partir das premissas de que ${C_1 = C_2 = 10 \mu F}$ e de que ${R_1 = R_2}$, temos:
 
 \begin{align*}
-  \frac{1}{R1 10\mu} &= 7 \\
-  R1 &= R2 = 14,3k\Omega \\
-  \frac{1}{R2R3 100p} &= 8 \\
-  800p R2R3 &= 1 \\
-  R3 &= 87,4K\Omega \\
-  \frac{1}{R2R 100p} &= 2 \\
-  200p R2R &= 1 \\
-  R &= 350K\Omega
+  \frac{1}{R_1 10\mu} &= 7 \\
+  R_1 &= R_2 = 14,3k\Omega \\
+  \frac{1}{R_2R_3 100p} &= 8 \\
+  800p R_2R_3 &= 1 \\
+  R_3 &= 87,4k\Omega \\
+  \frac{1}{R_2R 100p} &= 2 \\
+  200p R_2R &= 1 \\
+  R &= 350k\Omega
 \end{align*}
 
-E, assim, podemos realizar as simulações elétricas e construir o circuito da TF no \emph{Multisim}.
+E, assim, podemos realizar as simulações elétricas, construindo o circuito da TF no \emph{Multisim}.
+
+\section{Simulação dos resultados através do \emph{Multisim}}
+
+Trazendo as observações apreciadas nos itens anteriores para a prática, e usando os valores de ${R_1}$, ${R_2}$, ${R_3}$ e ${R}$ calculados, junto com a premissa de que ${C_1 = C_2 = 100nF}$, temos o circuito elétrico equivalente da TF e sua respectiva resposta no osciloscópio, através das Figuras \ref{fig:circuit} e \ref{fig:response}
+
+\begin{figure}[h!]
+  \includegraphics[width=\linewidth, center]{multisim_circuit.jpg}
+  \caption{Mapa de pólos e zeros da TF.}
+  \label{fig:circuit}
+\end{figure}
+
+\begin{figure}[h]
+  \includegraphics[width=\linewidth, center]{multisim_response.jpg}
+  \caption{Mapa de pólos e zeros da TF.}
+  \label{fig:response}
+\end{figure}
+
+\newpage
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+\bibliography{references}
 
 \end{document}
